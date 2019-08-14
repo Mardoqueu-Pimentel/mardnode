@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const winston = require('winston');
+require('winston-daily-rotate-file');
 
 const levels = {
 	levels: {
@@ -35,20 +36,30 @@ const defaultConsole = new winston.transports.Console({
 	prettyPrint: true
 });
 
-const logsFile = new winston.transports.File({
+const logsFile = new (winston.transports.DailyRotateFile)({
 	name: 'logs',
-	level: 'debug',
-	filename: 'logs/logs.log',
+	level: 'error',
+	dirname: './logs',
+	filename: '%DATE%-logs.log',
+	datePattern: 'YYYY-MM-DD-HH',
 	json: true,
-	prettyPrint: true
+	prettyPrint: true,
+	zippedArchive: true,
+	maxSize: '20m',
+	maxFiles: '31d'
 });
 
-const errorsFile = new winston.transports.File({
+const errorsFile = new (winston.transports.DailyRotateFile)({
 	name: 'errors',
 	level: 'error',
-	filename: 'logs/errors.log',
+	dirname: './logs',
+	filename: '%DATE%-errors.log',
+	datePattern: 'YYYY-MM-DD-HH',
 	json: true,
-	prettyPrint: true
+	prettyPrint: true,
+	zippedArchive: true,
+	maxSize: '10m',
+	maxFiles: '31d'
 });
 
 const log = new winston.Logger({
