@@ -1,0 +1,25 @@
+{
+  "name": "mardnode",
+  "version": "1.0.0",
+  "description": "My node utils",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mardoqueu-Pimentel/mardnode.git"
+  },
+  "keywords": [
+    "utils"
+  ],
+  "author": "Mardoqueu Pimentel",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Mardoqueu-Pimentel/mardnode/issues"
+  },
+  "homepage": "https://github.com/Mardoqueu-Pimentel/mardnode#readme",
+  "dependencies": {
+    "winston": "^2.4.4"
+  }
+}
