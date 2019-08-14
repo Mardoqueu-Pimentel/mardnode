@@ -41,7 +41,8 @@ const logsFile = new winston.transports.File({
 	dirname: 'logs',
 	filename: 'logs.log',
 	json: true,
-	prettyPrint: true
+	prettyPrint: true,
+	eol: '\n\n'
 });
 
 const errorsFile = new winston.transports.File({
@@ -50,7 +51,8 @@ const errorsFile = new winston.transports.File({
 	dirname: 'logs',
 	filename: 'errors.log',
 	json: true,
-	prettyPrint: true
+	prettyPrint: true,
+	eol: '\n\n'
 });
 
 const log = new winston.Logger({
