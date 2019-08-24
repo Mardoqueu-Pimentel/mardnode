@@ -1,9 +1,9 @@
 # Logs
 logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+*.logging
+npm-debug.logging*
+yarn-debug.logging*
+yarn-error.logging*
 
 # Runtime data
 pids
@@ -63,3 +63,6 @@ typings/
 package-lock\.json
 
 \.idea/
+*.venv
+
+.ipynb_checkpoints/
