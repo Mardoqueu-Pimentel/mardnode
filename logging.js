@@ -1,85 +1,62 @@
-const fs = require('fs');
-const winston = require('winston');
-require('winston-mongodb');
+const pino = require('pino');
 
-const strings = require("./strings");
+const MARDNODE_LOG_EXTREME = process.env.MARDNODE_LOG_EXTREME === 'true';
+const MARDNODE_LOG_FLUSH_TIME = parseInt(process.env.MARDNODE_LOG_FLUSH_TIME) || 10000;
+const MARDNODE_GO_HORSE = process.env.MARDNODE_GO_HORSE === 'go';
 
-const levels = {
-	levels: {
-		debug: 4,
-		verbose: 3,
-		info: 2,
-		warn: 1,
-		error: 0
-	},
-	colors: {
-		debug: 'green',
-		verbose: 'blue',
-		info: 'white',
-		warn: 'yellow',
-		error: 'red'
-	}
-};
+const log = pino({
+	level: 'trace',
+	base: null,
+}, MARDNODE_LOG_EXTREME ? pino.extreme() : undefined);
+log[pino.symbols.endSym] = '}\n';
 
-try {
-	fs.mkdirSync('./logs');
-} catch (error) {
-	if (error.code !== 'EEXIST') {
-		throw error;
+if (MARDNODE_LOG_EXTREME) {
+	setInterval(() => log.flush(), MARDNODE_LOG_FLUSH_TIME).unref();
+}
+
+for (const level of Object.keys(log.levels.values)) {
+	const method = log[level].bind(log);
+	log[level] = function logProxy() {
+		const caller = arguments.callee.caller;
+		method({
+			where: caller ? (caller.name ? caller.name : undefined) : undefined,
+			...arguments
+		});
 	}
 }
 
-const defaultConsole = new winston.transports.Console({
-	name: 'defaultConsole',
-	level: 'debug',
-	colorize: 'all',
-	prettyPrint: true,
-	timestamp: true
-});
-
-const mongo = new winston.transports.MongoDB({
-	name: 'mongo',
-	level: 'debug',
-	db: 'mongodb://localhost:27017/botDev'
-});
-
-const log = new winston.Logger({
-	levels: levels.levels,
-	transports: [defaultConsole, mongo]
-});
-
-
-Object.keys(levels.levels).forEach(level => {
-	const method = log[level];
-	log[level] = (...args) => {
-		const [argStrings, argObjs] = [[], []];
-		for (const arg of args) {
-			if (strings.isString(arg)) {
-				argStrings.push(arg);
-			} else {
-				argObjs.push(arg);
-			}
-		}
-		method(argStrings, argObjs);
-	};
-});
-
-process.on('uncaughtException', error => {
-	log.error({where: 'process', message: 'uncaughtException', meta: error});
-});
-
-process.on('unhandledRejection', reason => {
-	log.error('process:unhandledRejection', reason);
-});
+log.verbose = log.info;
 
 function overrideConsole() {
-	console.log = log.debug;
-	console.debug = log.debug;
-	console.verbose = log.verbose;
-	console.info = log.info;
-	console.warn = log.warn;
-	console.error = log.error;
+	for (const level of ['trace', 'debug', 'info', 'warn', 'error']) {
+		console[level] = log[level].bind(log);
+	}
+	console.log = log.debug.bind(log);
 }
+
+for (evt of ['beforeExit', 'exit', 'SIGINT', 'SIGQUIT', 'SIGTERM']) {
+	process.on(evt, () => {
+		log.info(`caught:${evt}`);
+		log.flush();
+		process.exit(0);
+	});
+}
+
+process.on('unhandledRejection', reason => {
+	log.error('caught:unhandledRejection', reason.stack.split('\n'));
+});
+
+process.on('uncaughtException',
+	MARDNODE_GO_HORSE
+		? error => {
+			log.error('caught:uncaughtException', 'GO HORSE!', error.stack.split('\n'));
+		}
+		: error => {
+			log.fatal('caught:uncaughtException', error.stack.split('\n'));
+			log.flush();
+			process.exit(1);
+		}
+);
 
 module.exports = {
 	log,
