@@ -66,3 +66,4 @@ package-lock\.json
 *.venv
 
 .ipynb_checkpoints/
+/config/config.js
