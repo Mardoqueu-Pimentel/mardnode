@@ -1,72 +1,23 @@
-const {log, overrideConsole} = require('./logging');
+#!/bin/env node
 
-const sleep = timeout => new Promise(resolve => setTimeout(resolve, timeout));
-
-overrideConsole();
+const r = require('../r');
+const envConfig = require('../lib/envConfig');
+const {log} = require('../lib/logging');
 
 async function main() {
+	await envConfig.init(r.gap('config'));
 
-	console.log('console.log');
+	setInterval(() => {
 
-	console.log({
-		a: 123,
-		b: {
-			a: 123
-		},
-		c: undefined
-	});
-
-	await sleep(250);
-
-	log.debug('log.debug');
-	console.debug('console.debug');
-
-	await sleep(250);
-
-	log.info('log.info');
-	console.info('console.info');
-
-	await sleep(250);
-
-
-	b += 1;
-
-	log.warn('log.warn');
-	console.warn('console.warn');
-
-	await sleep(250);
-
-	log.error('log.error');
-	console.error('console.error');
-
-	await sleep(250);
-
-	console.error({
-		a: 1,
-		b: 2,
-		c: {
-			a: 1,
-			b: 2,
-			c: {
-				a: 1,
-				b: 2,
-				c: {
-
-				}
-			}
+		for (const level of Object.keys(log.levels.values)) {
+			log[level](`testing log.${level}`);
 		}
-	}, '123');
+
+	}, 1000);
 }
 
-(async function run() {
-	await main();
-})();
+function run() {
+	main().catch(console.error);
+}
 
-setInterval(() => log.info('running'), 1000);
-
-setInterval(() => {
-	log.info('running for error', 5000);
-	c += 1;
-}).unref();
-
-a += 1;
+run();
