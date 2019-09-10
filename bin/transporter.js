@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/env node
 
 const mongoDB = require('../lib/mongoDB');
 const { SplitEmitter } = require('../lib/splitEmitter');
@@ -8,21 +8,15 @@ const r = require('../r');
 
 const envConfig = require('../lib/envConfig');
 
-function jsonToObject(json) {
-	let obj = json;
-	try { obj = JSON.parse(json); } catch (e) {}
-	return obj instanceof Array ? {...obj} : {'0': obj};
-}
-
 async function main() {
 	await envConfig.init(r.gap('config'));
 	const config = envConfig.config;
 
-	const address = config.MARDNODE_MONGO_ADDRESS;
+	const addr = config.MARDNODE_MONGO_ADDRESS;
 	const port = config.MARDNODE_MONGO_PORT;
-	const user = config.MARDNODE_MONGO_USER;
-	const pass = config.MARDNODE_MONGO_PASS;
-	const client = await mongoDB.connect(`mongodb://${user}:${pass}@${address}:${port}`, {
+	const u = config.MARDNODE_MONGO_USER;
+	const p = config.MARDNODE_MONGO_PASS;
+	const client = await mongoDB.connect(`mongodb://${u}:${p}@${addr}:${port}`, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 		autoReconnect: true,
@@ -34,11 +28,13 @@ async function main() {
 		.collection(config.MARDNODE_MONGO_COLLECTION);
 	const splitEmitter = new SplitEmitter(process.stdin, split => {
 		const obj = tryOrDefault(() => JSON.parse(split), split);
-		const logObj = obj instanceof Array ? {...obj} : (
-			typeof obj === 'string' || typeof obj === 'number'
-				? {'0': obj}
-				: obj
-		);
+		const logObj = obj instanceof Array
+			? {...obj}
+			: (
+				typeof obj === 'string' || typeof obj === 'number'
+					? {'0': obj}
+					: obj
+			);
 
 		logObj.time = logObj.time != null
 			? new Date(logObj.time).toJSON()

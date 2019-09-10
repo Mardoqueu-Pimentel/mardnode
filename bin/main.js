@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/env node
 
 const r = require('../r');
 const envConfig = require('../lib/envConfig');

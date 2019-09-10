@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/env node
 
 const commandLineArgs = require('command-line-args');
 const fs = require('fs');
