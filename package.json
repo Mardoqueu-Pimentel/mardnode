@@ -22,17 +22,25 @@
   },
   "homepage": "https://github.com/Mardoqueu-Pimentel/mardnode#readme",
   "dependencies": {
+    "@hapi/joi": "^16.1.4",
     "chalk": "^2.4.2",
     "command-line-args": "^5.1.1",
     "eslint": "^6.3.0",
     "inquirer": "^7.0.0",
+    "joi": "^14.3.1",
+    "lodash": "^4.17.15",
     "mongodb": "^3.3.2",
-    "pino": "^5.13.2"
+    "pino": "^5.13.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/command-line-args": "^5.0.0",
     "@types/inquirer": "^6.5.0",
+    "@types/joi": "^14.3.3",
     "@types/mongodb": "^3.3.1",
-    "@types/pino": "^5.8.10"
+    "@types/pino": "^5.8.10",
+    "@types/request-promise": "^4.1.44"
   }
 }
