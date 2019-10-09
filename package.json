@@ -6,7 +6,8 @@
   "scripts": {
     "main": "node ${NODE_ARGS} bin/main.js ${APP_ARGS}",
     "init": "node ${NODE_ARGS} bin/init.js ${APP_ARGS}",
-    "transporter": "pm2 logs ${APP_NAME} --lines 0 --raw | ./bin/transporter.js"
+    "transporter": "pm2 logs ${APP_NAME} --lines 0 --raw | ./bin/transporter.js",
+    "prettyfier": "pm2 logs ${APP_NAME} --lines 0 --raw | ./bin/prettyfier.js"
   },
   "repository": {
     "type": "git",

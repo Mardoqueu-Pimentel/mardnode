@@ -58,7 +58,7 @@ module.exports = [
 		validate: x => x.length > 0
 	},
 	{
-		type: 'input',
+		type: 'password',
 		name: 'MARDNODE_MONGO_PASS',
 		message: 'Mongodb password',
 		validate: x => x.length > 0
